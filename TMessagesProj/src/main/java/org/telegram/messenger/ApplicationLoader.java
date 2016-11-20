@@ -275,6 +275,7 @@ public class ApplicationLoader extends Application {
         boolean enablePushConnection = preferences.getBoolean("pushConnection", true);
 
         MessagesController.getInstance();
+        LockController.getInstance();
         ConnectionsManager.getInstance().init(BuildVars.BUILD_VERSION, TLRPC.LAYER, BuildVars.APP_ID, deviceModel, systemVersion, appVersion, langCode, configPath, FileLog.getNetworkLogPath(), UserConfig.getClientUserId(), enablePushConnection);
         if (UserConfig.getCurrentUser() != null) {
             MessagesController.getInstance().putUser(UserConfig.getCurrentUser(), true);

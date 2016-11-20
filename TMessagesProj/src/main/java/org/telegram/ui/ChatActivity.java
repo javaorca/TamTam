@@ -64,6 +64,7 @@ import org.telegram.messenger.BuildConfig;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.LockController;
 import org.telegram.messenger.MediaController;
 import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.NotificationsController;
@@ -189,6 +190,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private StickersAdapter stickersAdapter;
     private FrameLayout stickersPanel;
     private TextView muteItem;
+    private TextView lockItem;
     private FrameLayout pagedownButton;
     private boolean pagedownButtonShowedByScroll;
     private TextView pagedownButtonCounter;
@@ -439,6 +441,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int reply = 19;
     private final static int edit_done = 20;
     private final static int report = 21;
+    private final static int lock_chat = 22;
 
     private final static int bot_help = 30;
     private final static int bot_settings = 31;
@@ -639,6 +642,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         NotificationCenter.getInstance().addObserver(this, NotificationCenter.didLoadedPinnedMessage);
         NotificationCenter.getInstance().addObserver(this, NotificationCenter.peerSettingsDidLoaded);
         NotificationCenter.getInstance().addObserver(this, NotificationCenter.newDraftReceived);
+        NotificationCenter.getInstance().addObserver(this, NotificationCenter.chatLockSettingsUpdated);
 
         super.onFragmentCreate();
 
@@ -884,6 +888,16 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         return;
                     }
                     showDialog(AndroidUtilities.buildTTLAlert(getParentActivity(), currentEncryptedChat).create());
+                } else if (id == lock_chat) {
+                    if (getParentActivity() == null) {
+                        return;
+                    }
+
+                    if(LockController.getInstance().isDialogLocked(dialog_id)) {
+                        LockController.getInstance().unlockDialog(dialog_id);
+                    } else {
+                        presentFragment(new ChatPasscodeActivity(1, dialog_id));
+                    }
                 } else if (id == clear_history || id == delete_chat) {
                     if (getParentActivity() == null) {
                         return;
@@ -1057,6 +1071,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
         if (currentEncryptedChat != null) {
             timeItem2 = headerItem.addSubItem(chat_enc_timer, LocaleController.getString("SetTimer", R.string.SetTimer), 0);
+
+            if (LockController.getInstance().isDialogLocked(dialog_id)) {
+                lockItem = headerItem.addSubItem(lock_chat, LocaleController.getString("UnlockChat", R.string.UnlockChat), 0);
+            } else {
+                lockItem = headerItem.addSubItem(lock_chat, LocaleController.getString("LockChat", R.string.LockChat), 0);
+            }
         }
         if (!ChatObject.isChannel(currentChat)) {
             headerItem.addSubItem(clear_history, LocaleController.getString("ClearHistory", R.string.ClearHistory), 0);
@@ -4430,6 +4450,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 muteItem.setText(LocaleController.getString("MuteNotifications", R.string.MuteNotifications));
             }
         }
+
+        if (lockItem != null) {
+            if (LockController.getInstance().isDialogLocked(dialog_id)) {
+                lockItem.setText(LocaleController.getString("UnlockChat", R.string.UnlockChat));
+            } else {
+                lockItem.setText(LocaleController.getString("LockChat", R.string.LockChat));
+            }
+        }
     }
 
     private void checkAndUpdateAvatar() {
@@ -6275,6 +6303,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (did == dialog_id) {
                 applyDraftMaybe(true);
             }
+        } else if (id == NotificationCenter.chatLockSettingsUpdated) {
+            updateTitleIcons();
         }
     }
 

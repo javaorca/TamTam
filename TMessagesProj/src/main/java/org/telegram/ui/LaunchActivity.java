@@ -365,10 +365,13 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                         preferences.edit().putBoolean("channel_intro", true).commit();
                     }
                     drawerLayoutContainer.closeDrawer(false);
-                } else if (position == 6) {
-                    presentFragment(new ContactsActivity(null));
+                } else if (position == 5) {
+                    presentFragment(new ChatPasscodeActivity(2));
                     drawerLayoutContainer.closeDrawer(false);
                 } else if (position == 7) {
+                    presentFragment(new ContactsActivity(null));
+                    drawerLayoutContainer.closeDrawer(false);
+                } else if (position == 8) {
                     try {
                         Intent intent = new Intent(Intent.ACTION_SEND);
                         intent.setType("text/plain");
@@ -378,10 +381,10 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                         FileLog.e("tmessages", e);
                     }
                     drawerLayoutContainer.closeDrawer(false);
-                } else if (position == 8) {
+                } else if (position == 9) {
                     presentFragment(new SettingsActivity());
                     drawerLayoutContainer.closeDrawer(false);
-                } else if (position == 9) {
+                } else if (position == 10) {
                     Browser.openUrl(LaunchActivity.this, LocaleController.getString("TelegramFaqUrl", R.string.TelegramFaqUrl));
                     drawerLayoutContainer.closeDrawer(false);
                 }
@@ -1022,7 +1025,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                                 }
                             }
                         }
-                    } else if (intent.getAction().equals("org.telegram.messenger.OPEN_ACCOUNT")) {
+                    } else if (intent.getAction().equals("ru.javaorca.tamtam.OPEN_ACCOUNT")) {
                         open_settings = 1;
                     } else if (intent.getAction().startsWith("com.tmessages.openchat")) {
                         int chatId = intent.getIntExtra("chatId", 0);

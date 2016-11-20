@@ -3169,7 +3169,8 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                         }
 
                         dialogs.clear();
-                        dialogs.addAll(dialogs_dict.values());
+                        // dialogs.addAll(dialogs_dict.values());
+                        LockController.getInstance().addNonlockedDialogs(dialogs_dict, dialogs);
                         sortDialogs(migrate ? chatsDict : null);
 
                         if (loadType != 2) {
@@ -4438,6 +4439,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
         UserConfig.clearConfig();
         NotificationCenter.getInstance().postNotificationName(NotificationCenter.appDidLogout);
         MessagesStorage.getInstance().cleanup(false);
+        LockStorage.getInstance().cleanup();
         cleanup();
         ContactsController.getInstance().deleteAllAppAccounts();
     }

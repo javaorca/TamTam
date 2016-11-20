@@ -214,7 +214,7 @@ public class ContactsController {
         AccountManager am = AccountManager.get(ApplicationLoader.applicationContext);
         Account[] accounts;
         try {
-            accounts = am.getAccountsByType("org.telegram.account");
+            accounts = am.getAccountsByType("ru.javaorca.tamtam.account");
             if (accounts != null && accounts.length > 0) {
                 for (int a = 0; a < accounts.length; a++) {
                     am.removeAccount(accounts[a], null, null);
@@ -224,7 +224,7 @@ public class ContactsController {
             FileLog.e("tmessages", e);
         }
 
-        accounts = am.getAccountsByType("org.telegram.messenger");
+        accounts = am.getAccountsByType("ru.javaorca.tamtam");
         boolean recreateAccount = false;
         if (UserConfig.isClientActivated()) {
             if (accounts.length == 1) {
@@ -253,7 +253,7 @@ public class ContactsController {
             }
             if (UserConfig.isClientActivated()) {
                 try {
-                    currentAccount = new Account("" + UserConfig.getClientUserId(), "org.telegram.messenger");
+                    currentAccount = new Account("" + UserConfig.getClientUserId(), "ru.javaorca.tamtam");
                     am.addAccountExplicitly(currentAccount, "", null);
                 } catch (Exception e) {
                     FileLog.e("tmessages", e);
@@ -265,7 +265,7 @@ public class ContactsController {
     public void deleteAllAppAccounts() {
         try {
             AccountManager am = AccountManager.get(ApplicationLoader.applicationContext);
-            Account[] accounts = am.getAccountsByType("org.telegram.messenger");
+            Account[] accounts = am.getAccountsByType("ru.javaorca.tamtam");
             for (int a = 0; a < accounts.length; a++) {
                 am.removeAccount(accounts[a], null, null);
             }
